@@ -1,0 +1,96 @@
+[{
+    "id": "1",
+    "bookName": "They Called Us Enemy",
+    "categoryName": "biography",
+    "price": "1000"
+  },
+  {
+    "id": "2",
+    "bookName": "Becoming Superman",
+    "categoryName": "biography",
+    "price": "2000"
+  },
+  {
+    "id": "3",
+    "bookName": "The Great Successor",
+    "categoryName": "biography",
+    "price": "5000"
+  },
+  {
+    "id": "4",
+    "bookName": "The Last Pirate of New York",
+    "categoryName": "biography",
+    "price": "4000"
+  },
+  {
+    "id": "5",
+    "bookName": "George Marshall",
+    "categoryName": "history",
+    "price": "7000"
+  },
+  {
+    "id": "6",
+    "bookName": "The Liberation of Paris",
+    "categoryName": "history",
+    "price": "8000"
+  },
+  {
+    "id": "7",
+    "bookName": "Norco",
+    "categoryName": "history",
+    "price": "7000"
+  },
+  {
+    "id": "8",
+    "bookName": "The Liberation of Paris",
+    "categoryName": "history",
+    "price": "6000"
+  },
+  {
+    "id": "9",
+    "bookName": "The Bookish Life of Nina Hill",
+    "categoryName": "novels",
+    "price": "7000"
+  },
+  {
+    "id": "10",
+    "bookName": "The Me I Used to Be",
+    "categoryName": "novels",
+    "price": "9000"
+  },
+  {
+    "id": "11",
+    "bookName": "Maybe This Time",
+    "categoryName": "novels",
+    "price": "5000"
+  },
+  {
+    "id": "12",
+    "bookName": "The Marriage Clock",
+    "categoryName": "novels",
+    "price": "9000"
+  },
+  {
+    "id": "13",
+    "bookName": "Because Internet",
+    "categoryName": "science",
+    "price": "2000"
+  },
+  {
+    "id": "14",
+    "bookName": "Stronghold",
+    "categoryName": "science",
+    "price": "5000"
+  },
+  {
+    "id": "15",
+    "bookName": "Late Migrations",
+    "categoryName": "science",
+    "price": "9500"
+  },
+  {
+    "id": "16",
+    "bookName": "The Trouble with Gravity",
+    "categoryName": "science",
+    "price": "7800"
+  }]
