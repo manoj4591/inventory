@@ -2,68 +2,52 @@ import React, { Component } from 'react';
 import { Table, Container, Row, Col, Button, Badge, Modal, ModalHeader, ModalBody, ModalFooter  } from 'reactstrap';
 import axios from 'axios';
 import _ from 'lodash';
-import {getRepos} from './bookService'
+import CategoryView from './CategoryView'
+import AddBookModal from "./AddBookModal";
 
 class BooksView extends React.Component {
 
     constructor() {
         super()
         document.title = 'Books';
-        this.state ={
-            category : null,
+        this.state = {
+            addcategorystate: false,
+            editCategoryName: null,
             books: null,
-            selectedBooks: null,
-            modal: false
         }
     }
 
-    // componentWillMount() {
-    //     this.getcategoryData();
-    //   }
-
-    //   getcategoryData() {
-    //     getRepos()
-    //       .then(({res}) => {
-    //         this.getcategory(res);
-    //         this.setState({books : res});
-    //       });
-    //   }
-
-    componentDidMount() {
-        axios.get(`/bookStore.json`)
-        .then(res => {
-          this.getcategory(res.data);
-          this.setState({books : res.data});
-        })
+    componentDidUpdate(){
+        const { bookStore } = this.props;
+        if(bookStore && !this.state.categoryData){
+            this.getcategory(bookStore);
+        }
     }
 
-    getcategory(data){
-        console.log(data);
-        // let box = data.reduce((r, a) => {
-        //     if (a['categoryName']) {
-        //     r[a.categoryName] = r[a.categoryName] || [];
-        //     r[a.categoryName].push(a);
-        //     }
-        //     return r;
-        //     }, Object.create(null));
-        // console.log(box);
-        
-        let uniCategories = _.uniq(_.map(data, 'categoryName'));
-        let result = _.pick(_.countBy(data, 'categoryName'),  uniCategories);
-        console.log(result);
-        let category = [];
-        for( let b in result) {
-            let obj = {
-                name : b,
-                count : result[b]
-            };
-          category.push( obj ); 
+    getcategory = (data) => {
+        if(data !== null){
+            let uniCategories = _.uniq(_.map(data, 'categoryName'));
+            let result = _.pick(_.countBy(data, 'categoryName'),  uniCategories);
+            let category = [];
+            for( let b in result) {
+                let obj = {
+                    name : b,
+                    count : result[b]
+                };
+              category.push( obj ); 
+            }
+            this.setState({categoryData: category, books: data});
         }
+    }
+
+    addNewCategory(value){
+        const {category} = this.state;
+        category.push(value);
         this.setState({category});
     }
 
-    opensubtable(value){
-        const {books} = this.state;
+    opensubtable = (value) => {
+        const { books } = this.state;
         let booksByCat = [];
         books.map(x =>{
             if(x.categoryName === value){
@@ -73,11 +57,11 @@ class BooksView extends React.Component {
         this.setState({selectedBooks : booksByCat})
     }
 
-    deleteCategory = (value) =>{
-        const {category, books} = this.state;
+    deleteCategory = (value, categoryData) => {
+        const { books } = this.state;
         let booksByCat = [];
         let categoryDelete = [];
-        category.map(x =>{
+        categoryData.map(x =>{
             if(x.name !== value){
                 categoryDelete.push(x);
             }
@@ -88,14 +72,61 @@ class BooksView extends React.Component {
                 this.setState({selectedBooks : null})
             }
         })
-        this.setState({category: categoryDelete });
+        this.setState({categoryData: categoryDelete });
+    }
+
+    createCategory = () =>{
+       this.setState({addcategorystate : true});
+    }
+
+    addNewCategory = (value) => {
+        const {categoryData} = this.state;
+        categoryData.push(value);
+        this.setState({addcategorystate : false, categoryData: categoryData});
+    }
+
+    editCategory = (value) => {
+        this.setState({addcategorystate : true, editCategoryName: value});
+    }
+
+    editcatbyName = (value) => {
+        const {categoryData, books} = this.state;
+        categoryData.map(x => {
+            if(x.name == this.state.editCategoryName){
+                x.name = value;
+            }
+        })
+        books.map(x =>{
+            if(x.categoryName === this.state.editCategoryName){
+                x.categoryName = value;
+            }
+        })
+        this.setState({addcategorystate : false, categoryData: categoryData, books: books});
+    }
+
+    _addBook = () => {
+        console.log('here');
+        this.setState({showBookActionModal: true});
+    };
+
+    _modalToggle = () => {
+        this.setState(prevState => {
+            return {showBookActionModal: !prevState.showBookActionModal};
+        });
+    };
+
+    addnewBook = (value) => {
+        const { books } = this.state;
+        books.push(value);
+        this.setState({showBookActionModal: false, books: books});
     }
 
     render() {
-        let {category, selectedBooks} = this.state;
+        const { bookStore } = this.props;
+        const { selectedBooks, categoryData } = this.state;
         return (
             <>
-                <Container className="py-4">
+                {!this.state.addcategorystate && <Container className="py-4">
                     <Row className="py-3">
                         <h3>Public library</h3>
                     </Row>
@@ -104,7 +135,8 @@ class BooksView extends React.Component {
                         <h4 className="py-1">Book Categories</h4>
                         </Col>
                         <Col xs="6" className="text-right">
-                        <a className="btn btn-info" href="/category">Create Category</a>
+                        <a className="btn btn-info m-2" onClick={this.createCategory}>Create Category</a>
+                        <a className="btn btn-info m-2" onClick={this._addBook}>Add Book</a>
                         </Col>
                         <Table striped bordered responsive hover>
                             <thead>
@@ -116,13 +148,13 @@ class BooksView extends React.Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {category && category.map((val, key) => {
+                                {categoryData && categoryData.map((val, key) => {
                                     return (
                                         <tr key={key}>
                                             <td onClick={() => this.opensubtable(val['name'])}><Badge href="#" color="light">{val['name']}</Badge></td>
                                             <td>{val['count']}</td>
-                                            <td><Button className="btn btn-primary">Edit</Button></td>
-                                            <td><Button className="btn btn-danger" onClick={() => this.deleteCategory(val['name'])}>Delete</Button></td>
+                                            <td><Button className="btn btn-primary" onClick={() => this.editCategory(val['name'], categoryData)}>Edit</Button></td>
+                                            <td><Button className="btn btn-danger" onClick={() => this.deleteCategory(val['name'], categoryData)}>Delete</Button></td>
                                         </tr>
                                     )
                                 })}
@@ -140,7 +172,6 @@ class BooksView extends React.Component {
                                 <th>Name</th>
                                 <th>Price</th>
                                 <th>Category</th>
-                                <th>Delete</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -150,14 +181,16 @@ class BooksView extends React.Component {
                                             <td>{val['bookName']}</td>
                                             <td>{val['price']}</td>
                                             <td>{val['categoryName']}</td>
-                                            <td><Button className="btn btn-danger">Delete</Button></td>
                                         </tr>
                                     )
                                 })}
                             </tbody>
                         </Table>
                     </Row>}
-                </Container>
+                </Container>}
+                {this.state.addcategorystate && <CategoryView addNewCategory = {this.addNewCategory} editCat={this.editcatbyName} categoryNameEdit={this.state.editCategoryName} /> }
+                {this.state.showBookActionModal &&
+                    <AddBookModal toggle={this._modalToggle} modalOpen={this.state.showBookActionModal} categoryList={this.state.categoryData} addBook={this.addnewBook} />}
             </>
         );
     }

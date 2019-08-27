@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Container, Row, Col, Button, Form, FormGroup, Label, Input, FormText, Table } from 'reactstrap';
 import axios from 'axios';
 import _ from 'lodash';
-
 class CategoryView extends React.Component {
 
     constructor() {
@@ -14,19 +13,29 @@ class CategoryView extends React.Component {
     }
 
     componentDidMount() {
+        const { categoryNameEdit } = this.props;
+        if(categoryNameEdit && !this.state.name){
+            this.setState({name: categoryNameEdit});
+        }
     }
 
-    submitForm = (event) => {
+    submitForm = (value, event) => {
         if (!event.target.checkValidity()) {
             return;
           }
         event.preventDefault();
+
+        if(value == 'create'){
+            const categoryObject = {
+                name: this.state.name,
+                count: 0
+            };
+            this.props.addNewCategory(categoryObject);
+        } else {
+            this.props.editCat(this.state.name);
+        }
         
-        const categoryObject = {
-            name: this.state.name,
-            count: null
-        };
-        console.log(categoryObject);
+
       }
 
     setCategoryName = (event) => {
@@ -34,6 +43,7 @@ class CategoryView extends React.Component {
     };
 
     render() {
+
         return (
             <>
                 <Container className="py-4">
@@ -47,8 +57,8 @@ class CategoryView extends React.Component {
                     <Label>Category Name</Label>
                     <Input type="text" name="name" value={this.state.name} placeholder="categoryName" onChange={e => this.setCategoryName(e)} required/>
                     </FormGroup>
-                    <Button className="btn btn-primary" onClick={(e) => this.submitForm(e)} >Submit</Button>
-                </Form>
+                    <Button className="btn btn-primary" onClick={(e) => this.submitForm(this.props.categoryNameEdit ? 'edit' : 'create', e)} >Submit</Button>
+                    </Form>
                 </Container>
             </>
         );

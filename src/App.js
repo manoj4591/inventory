@@ -7,8 +7,7 @@ import {
   Switch,
   Redirect
 } from 'react-router-dom';
-import BookView from './books/BooksView'
-import CategoryView from './books/CategoryView'
+import Containerview from './books/Containerview'
 
 class App extends Component {
   render() {
@@ -16,8 +15,7 @@ class App extends Component {
       <div className="App">
         <div className="App-intro">
           <Switch>
-            <Route exact path="/"  component={BookView} />
-            <Route path="/category" component={CategoryView} />
+            <Route exact path="/"  component={Containerview} />
             <Redirect to="/" />
           </Switch>
         </div>
